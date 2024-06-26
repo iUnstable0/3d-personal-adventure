@@ -1,16 +1,24 @@
+import { useState } from "react";
+
 import Head from "next/head";
 
 import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
 
 import styles from "@/styles/Home.module.css";
 
 import Floor from "@/components/Floor";
 import Box from "@/components/Box";
 import LightBulb from "@/components/LightBulb";
+import Draggable from "@/components/Draggable";
 
 import { OrbitControls } from "@react-three/drei";
 
 export default function Home() {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
   return (
     <>
       <Head>
@@ -28,13 +36,25 @@ export default function Home() {
             position: [-6, 7, 7],
           }}
         >
-          <ambientLight color={"white"} intensity={0.5} />
+          <ambientLight color={"white"} intensity={Math.PI / 24} />
+          {/*<Box position={[-1.2, 0, 0]} />*/}
+          {/*<Box position={[1.2, 0, 0]} />*/}
           <LightBulb position={[3, 3, 0]} />
           <LightBulb position={[0, 3, 3]} />
-          <LightBulb position={[-3, 3, 0]} />
-          <LightBulb position={[0, 3, -3]} />
-          <Box rotateX={3} rotateY={0.2} />
-          <OrbitControls />
+          <LightBulb position={[3 * 2, 3, 0]} />
+          <LightBulb position={[0, 3, 3 * 2]} />
+
+          <LightBulb position={[3 * -2, 3, 0]} />
+          <LightBulb position={[0, 3, 3 * -2]} />
+          <LightBulb position={[3 * -4, 3, 0]} />
+          <LightBulb position={[0, 3, 3 * -4]} />
+          {/*<LightBulb position={[-3, 3, 0]} />*/}
+          {/*<LightBulb position={[0, 3, -3]} />*/}
+          <Draggable setIsDragging={setIsDragging} floorPlane={floorPlane}>
+            <Box rotateX={2} rotateY={0.2} />
+          </Draggable>
+          <OrbitControls enabled={!isDragging} />
+          {/*<OrbitControls />*/}
           <Floor position={[0, -1, 0]} />
         </Canvas>
       </div>
