@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDrag } from "@use-gesture/react";
 import { animated, useSpring } from "@react-spring/three";
-import { ThreeEvent, useThree } from "@react-three/fiber";
+import { ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Vector3 } from "three";
+import fpsController from "hls.js/src/controller/fps-controller";
 
 interface DraggableProps {
   children: React.ReactNode;
@@ -34,7 +35,7 @@ function Draggable({ children, setIsDragging, floorPlane }: DraggableProps) {
   const [spring, api] = useSpring(() => ({
     position: pos,
     scale: 1,
-    rotation: [0, 0, 0] as [number, number, number],
+    // rotation: [0, 0, 0] as [number, number, number],
     config: { friction: 10 },
   }));
 
@@ -57,7 +58,7 @@ function Draggable({ children, setIsDragging, floorPlane }: DraggableProps) {
       api.start({
         position: pos,
         scale: active ? 1.2 : 1,
-        rotation: [y / aspect, x / aspect, 0] as [number, number, number],
+        // rotation: [y / aspect, x / aspect, 0] as [number, number, number],
       });
       return timeStamp;
     },
@@ -69,7 +70,7 @@ function Draggable({ children, setIsDragging, floorPlane }: DraggableProps) {
       ref={groupRef}
       position={spring.position as any}
       scale={spring.scale}
-      rotation={spring.rotation as any}
+      // rotation={spring.rotation as any}
       {...(bind() as any)}
     >
       {children}
