@@ -4,7 +4,7 @@ import React from "react";
 function Floor(props) {
   return (
     <mesh {...props} receiveShadow>
-      <boxGeometry args={[20, 1, 10]} />
+      <boxGeometry args={[40, 4, 40]} />
       <meshPhysicalMaterial color="white" />
     </mesh>
   );

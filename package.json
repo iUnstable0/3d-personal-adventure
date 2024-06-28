@@ -12,9 +12,11 @@
     "@react-spring/three": "^9.7.3",
     "@react-three/drei": "^9.107.0",
     "@react-three/fiber": "^8.16.8",
+    "@react-three/rapier": "^1.4.0",
     "@use-gesture/react": "^10.3.1",
     "framer-motion-3d": "^11.2.12",
     "next": "14.2.4",
+    "r3f-perf": "^7.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.165.0"

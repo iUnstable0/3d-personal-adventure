@@ -4,7 +4,11 @@ import Head from "next/head";
 
 import { Canvas } from "@react-three/fiber";
 
+import { Physics } from "@react-three/rapier";
+
 import styles from "@/styles/Home.module.css";
+
+import { KeyboardControls } from "@react-three/drei";
 
 import Scene from "@/components/Scene";
 
@@ -18,16 +22,28 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.main}>
-        {/* @ts-ignore */}
-        <Canvas
-          shadows
-          className={styles.canvas}
-          camera={{
-            position: [-6, 7, 7],
-          }}
+        <KeyboardControls
+          map={[
+            { name: "forward", keys: ["ArrowUp", "KeyW"] },
+            { name: "backward", keys: ["ArrowDown", "KeyS"] },
+            { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
+            { name: "rightward", keys: ["ArrowRight", "KeyD"] },
+            { name: "jump", keys: ["Space"] },
+          ]}
         >
-          <Scene />
-        </Canvas>
+          {/* @ts-ignore */}
+          <Canvas
+            shadows
+            className={styles.canvas}
+            camera={{
+              position: [-6, 7, 7],
+            }}
+          >
+            <Physics debug>
+              <Scene />
+            </Physics>
+          </Canvas>
+        </KeyboardControls>
       </div>
     </>
   );
