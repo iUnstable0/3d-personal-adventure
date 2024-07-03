@@ -4,7 +4,6 @@ import { animated, useSpring } from "@react-spring/three";
 import { ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Vector3 } from "three";
-import fpsController from "hls.js/src/controller/fps-controller";
 
 interface DraggableProps {
   children: React.ReactNode;
@@ -13,7 +12,7 @@ interface DraggableProps {
 }
 
 function Draggable({ children, setIsDragging, floorPlane }: DraggableProps) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>();
   const [initialPos, setInitialPos] = useState<[number, number, number]>([
     0, 0, 0,
   ]);

@@ -1,0 +1,63 @@
+.main {
+	width: 100vw;
+	height: 100vh;
+}
+
+.canvas {
+	/*background: #000;*/
+}
+
+.welcomeBlur {
+	position: fixed;
+
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	width: 100%;
+	height: 100vh;
+
+	z-index: 101;
+
+	background: rgba(255, 255, 255, 0);
+
+	backdrop-filter: blur(32px);
+	-webkit-backdrop-filter: blur(32px);
+	//-moz-backdrop-filter: blur(32px);
+	//-o-backdrop-filter: blur(32px);
+	//-ms-backdrop-filter: blur(32px);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.welcomeTitle {
+	font-size: 44px;
+	font-family: "Ubuntu", sans-serif !important;
+	// margin-bottom: 32px;
+
+	color: #eaeaea;
+	text-align: center;
+}
+
+.welcomeDescription {
+	// margin: 32px 0;
+	// margin-bottom: 200px;
+	line-height: 1.5;
+	font-family: "quicksand", sans-serif !important;
+	font-size: 20px;
+	color: rgb(231, 231, 231);
+	text-align: center;
+}
+
+.welcomeHint {
+	// Italic
+	font-style: italic;
+	font-size: 15px;
+	font-weight: 400;
+
+	color: rgb(231, 231, 231);
+}

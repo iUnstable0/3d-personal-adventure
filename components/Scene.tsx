@@ -1,183 +1,90 @@
 import { useState, useRef, useEffect } from "react";
 
-import { useFrame } from "@react-three/fiber";
+import { Text3D, Center, useGLTF } from "@react-three/drei";
 
-import { Perf } from "r3f-perf";
+import { DateTime } from "luxon";
 
-import { motion } from "framer-motion-3d";
+import { RigidBody } from "@react-three/rapier";
 
-import { Physics, RigidBody, useRapier } from "@react-three/rapier";
+function Scene(props: any) {
+	const [cubes, setCubes] = useState(10);
 
-import * as THREE from "three";
-import Floor from "@/components/Floor";
-import Draggable from "@/components/Draggable";
+	const model = useGLTF("./hamburger-draco.glb");
 
-import { useKeyboardControls } from "@react-three/drei";
+	const getAge = () => {
+		const birthday = DateTime.local(2007, 4, 8);
+		const now = DateTime.local();
 
-import { OrbitControls, PivotControls } from "@react-three/drei";
+		const duration = now
+			.diff(birthday, [
+				"years",
+				"months",
+				"days",
+				"hours",
+				"minutes",
+				"seconds",
+				"milliseconds",
+			])
+			.toObject();
 
-function Scene(props) {
-  const [isDragging, setIsDragging] = useState(false);
-  const pointLightRef = useRef(null);
-  const playerRef = useRef(null);
+		return `I'm ${duration.years} years, ${duration.months} months, ${duration.days} days, ${duration.hours} hours, ${duration.minutes} minutes, and ${duration.seconds} seconds old`;
+	};
 
-  const { rapier, world } = useRapier();
+	const [age, setAge] = useState("");
 
-  const [subscribeKeys, getKeys] = useKeyboardControls();
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setAge(getAge());
+		}, 1);
 
-  useFrame((state, delta) => {
-    if (pointLightRef.current) {
-      // console.log(pointLightRef.current.intensity);
-      if (pointLightRef.current.intensity < 20) {
-        pointLightRef.current.intensity += 0.1;
-      }
-    }
+		// let shuffledGreetings = [...greetings];
 
-    const { forward, backward, leftward, rightward } = getKeys();
+		// for (let i = shuffledGreetings.length - 1; i > 0; i--) {
+		// 	const j = Math.floor(Math.random() * (i + 1));
+		// 	[shuffledGreetings[i], shuffledGreetings[j]] = [
+		// 		shuffledGreetings[j],
+		// 		shuffledGreetings[i],
+		// 	];
+		// }
 
-    const impulse = { x: 0, y: 0, z: 0 };
-    const torque = { x: 0, y: 0, z: 0 };
+		// setGreetings(shuffledGreetings);
 
-    const impulseStrength = 26.6 * delta;
-    const torqueStrength = 0.2 * delta;
-    // const torqueStrength = 0;
+		// return () => clearInterval(interval);
+	}, []);
 
-    if (forward) {
-      impulse.z -= impulseStrength;
-      torque.x -= torqueStrength;
-    }
+	return (
+		<>
+			{[...Array(cubes)].map((_, i) => (
+				<RigidBody key={i} restitution={0.5}>
+					<mesh castShadow receiveShadow position-y={i * 2 + 10}>
+						<boxGeometry args={[0.4, 0.4, 0.4]} />
+						<meshStandardMaterial color={[5, 2, 1]} />
+					</mesh>
+				</RigidBody>
+			))}
+			<RigidBody type={"fixed"}>
+				<mesh castShadow receiveShadow position-y={2} position-x={6}>
+					<Text3D font="./helvetiker_regular.typeface.json">Hello!</Text3D>
+				</mesh>
+			</RigidBody>
 
-    if (backward) {
-      impulse.z += impulseStrength;
-      torque.x += torqueStrength;
-    }
+			<RigidBody type={"fixed"}>
+				<mesh castShadow receiveShadow position-y={6}>
+					<Text3D font="./helvetiker_regular.typeface.json">{age}</Text3D>
+				</mesh>
+			</RigidBody>
 
-    if (leftward) {
-      impulse.x -= impulseStrength;
-      torque.z += torqueStrength;
-    }
+			<primitive object={model.scene} />
 
-    if (rightward) {
-      impulse.x += impulseStrength;
-      torque.z -= torqueStrength;
-    }
-
-    if (playerRef.current) {
-      playerRef.current.applyImpulse(impulse);
-      playerRef.current.applyTorqueImpulse(torque);
-    }
-  });
-
-  useEffect(() => {
-    const unsubscribe = subscribeKeys(
-      (state) => state.jump,
-      (value) => {
-        if (value) {
-          jump();
-        }
-      },
-    );
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const jump = () => {
-    if (playerRef.current) {
-      const origin = playerRef.current.translation();
-      origin.y -= 0.71;
-      const direction = { x: 0, y: -1, z: 0 };
-      const ray = new rapier.Ray(origin, direction);
-      const hit = world.castRay(ray, 10, true);
-
-      console.log(hit);
-
-      if (hit == null || hit.timeOfImpact < 0.015)
-        playerRef.current.applyImpulse({ x: 0, y: 5.5, z: 0 });
-    }
-  };
-
-  return (
-    <>
-      {/*<ambientLight color={"white"} intensity={Math.PI / 6} />*/}
-      <directionalLight
-        castShadow
-        position={[4, 4, 1]}
-        intensity={1.5}
-        shadow-mapSize={[1024, 1024]}
-        shadow-camera-near={1}
-        shadow-camera-far={10}
-        shadow-camera-top={10}
-        shadow-camera-right={10}
-        shadow-camera-bottom={-10}
-        shadow-camera-left={-10}
-      />
-
-      {/*<PivotControls*/}
-      {/*  depthTest={false}*/}
-      {/*  fixed={true}*/}
-      {/*  scale={100}*/}
-      {/*  anchor={[0, 0, 0]}*/}
-      {/*>*/}
-
-      <Perf />
-      <RigidBody
-        colliders={"ball"}
-        ref={playerRef}
-        canSleep={false}
-        restitution={0.5}
-        friction={1}
-        linearDamping={0.5}
-        angularDamping={0.5}
-      >
-        <mesh position={[0, 3, 0]}>
-          <pointLight
-            castShadow
-            intensity={0}
-            color={"white"}
-            ref={pointLightRef}
-          />
-          <sphereGeometry args={[0.7, 30, 10]} />
-          <motion.meshPhongMaterial
-            emissive={"yellow"}
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            transition={{
-              duration: 2,
-            }}
-          />
-        </mesh>
-      </RigidBody>
-
-      {/*</PivotControls>*/}
-      <RigidBody>
-        <Draggable
-          setIsDragging={setIsDragging}
-          floorPlane={new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)}
-        >
-          {/*<RigidBody>*/}
-          {/*<PivotControls depthTest={false} fixed={true} scale={100}>*/}
-          <mesh castShadow receiveShadow>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="limegreen" />
-          </mesh>
-          {/*</PivotControls>*/}
-          {/*</RigidBody>*/}
-        </Draggable>
-      </RigidBody>
-
-      <RigidBody type={"fixed"}>
-        <Floor position={[0, -1, 0]} />
-      </RigidBody>
-
-      <OrbitControls enabled={!isDragging} makeDefault />
-    </>
-  );
+			<RigidBody type={"fixed"}>
+				<mesh castShadow receiveShadow position-y={-1}>
+					<boxGeometry args={[400, 4, 400]} />
+					<meshPhysicalMaterial color="grey" />
+				</mesh>
+			</RigidBody>
+			{/*<OrbitControls makeDefault />*/}
+		</>
+	);
 }
 
 export default Scene;
